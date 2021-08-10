@@ -39,17 +39,17 @@ func (r router) Broadcast(ids []string) error {
 // TODO 路由规则、路由优先级
 // 一个连接一个goroutine
 func (r router) Route(ibtp *pb.IBTP) error {
-	_,to := ibtp.From,ibtp.To
-	if p, is := routerMap[to];is {
+	_, to := ibtp.From, ibtp.To
+	if p, is := routerMap[to]; is {
 		return p.Send(ibtp)
-	}else {
+	} else {
 		r.firstRoute(ibtp)
 		return nil
 	}
 	panic("implement me")
 }
 
-func (r router) firstRoute(ibtp *pb.IBTP)  {
+func (r router) firstRoute(ibtp *pb.IBTP) {
 	panic("implement me")
 }
 

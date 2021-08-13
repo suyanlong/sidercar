@@ -4,13 +4,12 @@ import (
 	"context"
 	"github.com/link33/sidercar/pkg/port"
 	appchainmgr "github.com/meshplus/bitxhub-core/appchain-mgr"
+	"github.com/meshplus/bitxhub-kit/storage"
 	"github.com/meshplus/bitxhub-model/pb"
 	"github.com/sirupsen/logrus"
-
-	"github.com/meshplus/bitxhub-kit/storage"
 )
 
-// 程序动态注入与随机的删除。
+//TODO 程序动态注入与随机的删除。sync.Map
 var routerMap map[string]port.Port
 
 func Register(id string, port port.Port) {
@@ -67,4 +66,8 @@ func (r router) InPut(ibtp *pb.IBTP) chan *pb.IBTP {
 
 func (r router) OutPut(ibtp *pb.IBTP) chan *pb.IBTP {
 	panic("implement me")
+}
+
+// 路由method，路由规则集。
+type RouteMethod interface {
 }

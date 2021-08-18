@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package pb;
+
+import "github.com/meshplus/bitxhub-model/pb/ibtp.proto";
+
+message IBTPX {
+  IBTP data = 1;
+  // route mode
+  string mode = 2; //dirct、relay
+  repeated string routeSign = 3;//路由节点签名路径，主要是对data hash签名，主要是相互校验。pier节点之间相互校验。pier 节点需要注册到中继连上。还可以过滤已经发送过的交易、也可以作恶惩罚。
+  string routeMethod = 4;//single、multicast、broadcast、
+  repeated string routeMethodArg = 5;//路由节点，默认第一个节点。或者转发消息。
+}
+// 若目的地址to不在路由表中，则使用如下规则，即routeRule如下值时。
+// method：single、multicast、broadcast、随机选择、最快速度、官方节点、开源节点、nat节点。
+// arg:
+// single：默认第一个、或者默认路由。
+// multicast：向routePeer发送。
+// broadcast：广播所有的给所有的peer。
+// 设置节点筛选器，根据标签。
+// 不需要指定节点ID，

@@ -7,13 +7,18 @@ import (
 	"github.com/meshplus/bitxhub-kit/storage"
 	"github.com/meshplus/bitxhub-model/pb"
 	"github.com/sirupsen/logrus"
+	"sync"
 )
 
 //TODO 程序动态注入与随机的删除。sync.Map
-var routerMap map[string]port.Port
+var routerMap sync.Map
 
-func Register(id string, port port.Port) {
-	routerMap[id] = port
+func Register(port port.Port) {
+	routerMap.Store(port.ID(), port)
+}
+
+func UnRegister(port port.Port) {
+	routerMap.Delete(port.ID())
 }
 
 type router struct {
@@ -39,9 +44,10 @@ func (r router) Broadcast(ids []string) error {
 // 一个连接一个goroutine
 func (r router) Route(ibtp *pb.IBTP) error {
 	_, to := ibtp.From, ibtp.To
-	if p, is := routerMap[to]; is {
-		return p.Send(ibtp)
+	if p, is := routerMap.Load(to); is {
+		return p.(port.Port).Send(ibtp)
 	} else {
+
 		r.firstRoute(ibtp)
 		return nil
 	}
@@ -70,4 +76,8 @@ func (r router) OutPut(ibtp *pb.IBTP) chan *pb.IBTP {
 
 // 路由method，路由规则集。
 type RouteMethod interface {
+	Single()
+	Multicast()
+	Broadcast()
+	Official()
 }
